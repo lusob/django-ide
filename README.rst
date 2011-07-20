@@ -22,10 +22,10 @@ Currently, the following features have been written and are working:
 Installation
 ============
 - From pypi:
-    $sudo pip install django-ide
+    $pip install django-ide
 
 - From source:
-    $sudo python setup.py install
+    $python setup.py install
 
 Configuration
 =============
@@ -45,7 +45,7 @@ RUN
 ===
 $python manage.py runserver
 That's it, the last command should start a local server on port 8000, now you can 
-open your browser and go to 127.0.0.1:8000/djide/edit to edit your projects apps.
+open your browser and go to 127.0.0.1:8000/djide to edit your projects apps.
 
 TODOs and BUGS
 ==============
