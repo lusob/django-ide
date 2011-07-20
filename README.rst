@@ -21,12 +21,12 @@ Currently, the following features have been written and are working:
 
 Installation
 ============
-#. From pypi:
+- From pypi:
 $sudo pip install django-ide
 
 or
 
-#. From source:
+- From source:
 sudo python setup.py install
 
 Configuration
