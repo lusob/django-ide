@@ -22,12 +22,10 @@ Currently, the following features have been written and are working:
 Installation
 ============
 - From pypi:
-$sudo pip install django-ide
-
-or
+    $sudo pip install django-ide
 
 - From source:
-sudo python setup.py install
+    sudo python setup.py install
 
 Configuration
 =============
