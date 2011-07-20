@@ -33,13 +33,11 @@ Configuration
 The django-ide has two settings that can be set in `settings.py`:
 
 #. Add `djide` to your INSTALLED_APPS in your ``settings.py`` project:
-
-INSTALLED_APPS = (
-    'djide',
+    INSTALLED_APPS = (
+        'djide',
 #. Include djide urls in your ``urls.py`` project:
-
-urlpatterns = patterns(
-    (r'^djide/', include('djide.urls')),
+    urlpatterns = patterns(
+        (r'^djide/', include('djide.urls')),
 
 RUN   
 ===
