@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>DjangoIDE</title>
+        <link  href="http://fonts.googleapis.com/css?family=Gruppo:regular&v1" rel="stylesheet" type="text/css" >
+        <link  href="http://fonts.googleapis.com/css?family=Maven+Pro:400,500,700,900&v1" rel="stylesheet" type="text/css" >
+        <link  href="http://fonts.googleapis.com/css?family=Gruppo:regular&v1" rel="stylesheet" type="text/css" >
+        <style>
+            body {
+                font-family: 'Gruppo', serif;
+                font-size: 36px;
+                font-style: normal;
+                font-weight: 400;
+                text-shadow: none;
+                text-decoration: none;
+                text-transform: none;
+                letter-spacing: 0em;
+                word-spacing: 0em;
+                line-height: 1.2;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>django - installed apps:</h1>
+        <ul>
+            {% for name in apps %}
+            <li>
+                <a href="edit?appname={{ name }}">{{ name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
