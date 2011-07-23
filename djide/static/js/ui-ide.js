@@ -209,7 +209,7 @@ Ext.onReady(function(){
         tabPanelWest.setActiveTab(0);
     }
 
-    if(window.location.pathname=='/open'){
+    if(window.location.pathname=='/djide'){
         var fs = new Ext.FormPanel({
             labelAlign: 'right',
             labelWidth: 85,
@@ -583,12 +583,18 @@ Ext.onReady(function(){
         syncProject('save');
     }
     function onButtonOpenClick(){
-        window.location='/open';
+        window.location='/djide';
     }
     function onButtonReindentClick(){
         aEditors[tabs.getActiveTab().id].reindentSelection();
     }
     function onButtonFindClick(){
+        Ext.Msg.show({
+            title:'Feature not available',
+            msg: 'This feature is pending to do in next releases.',
+        });
+                         
+        /*
         Ext.Msg.prompt('Keywords', 'Please enter text to find:', function(btn, keywords){
             if (btn == 'ok' && !isEmpty(keywords)){
                 Ext.getBody().mask('Searching...', 'x-mask-loading');
@@ -607,6 +613,7 @@ Ext.onReady(function(){
                 });
             }
         });
+        */
     }
     function onStyleChange(item, checked){
         if (checked)

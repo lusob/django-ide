@@ -6,7 +6,7 @@ def read(fname):
 setup(
         name = 'django-ide',
         packages = ['djide',],
-        version = '0.0.3',
+        version = '0.0.4',
         description = 'Web based IDE to develop Django apps',
         author = 'Luis Sobrecueva',
         author_email = 'luis@sobrecueva.com',
