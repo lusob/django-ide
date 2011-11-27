@@ -69,7 +69,7 @@ Ext.onReady(function(){
             
             var animate = this.tree.animate;
             this.tree.animate = false;
-            this.tree.expandAll();
+            this.tree.expand(startNode);
             this.tree.animate = animate;
             Ext.ux.tree.TreeFilterX.superclass.filter.apply(this, arguments);
             
@@ -183,11 +183,11 @@ Ext.onReady(function(){
                 ,enableKeyEvents:true
                 ,listeners:{
                     keyup:{buffer:150, fn:function(field, e) {
-                        if(Ext.EventObject.ESC == e.getKey()) {
+                        var val = this.getRawValue();
+                        if(Ext.EventObject.ESC == e.getKey() || !val.match(/\S/)) {
                             field.onTriggerClick();
                         }
                         else {
-                            var val = this.getRawValue();
                             var re = new RegExp('.*' + val + '.*', 'i');
                             tree.filter.clear();
                             tree.filter.filter(re, 'text');
@@ -450,7 +450,7 @@ Ext.onReady(function(){
         iconCls: 'icon-grid',
         listeners: {
             'rowclick': function( grid, rowIndex, e ) {
-                var fileFullPath = 'workingcopies/'+appname +"/"+ grid.store.getAt(rowIndex).get('location');
+                var fileFullPath = grid.store.getAt(rowIndex).get('location');
                 syncEditor(fileFullPath);
             }
         }
@@ -589,12 +589,13 @@ Ext.onReady(function(){
         aEditors[tabs.getActiveTab().id].reindentSelection();
     }
     function onButtonFindClick(){
+        /*
         Ext.Msg.show({
             title:'Feature not available',
             msg: 'This feature is pending to do in next releases.',
-        });
-                         
-        /*
+        });               
+        */
+        
         Ext.Msg.prompt('Keywords', 'Please enter text to find:', function(btn, keywords){
             if (btn == 'ok' && !isEmpty(keywords)){
                 Ext.getBody().mask('Searching...', 'x-mask-loading');
@@ -613,7 +614,7 @@ Ext.onReady(function(){
                 });
             }
         });
-        */
+        
     }
     function onStyleChange(item, checked){
         if (checked)

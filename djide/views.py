@@ -30,7 +30,6 @@ def model_editor(request):
     app_name = request.POST.get('app_name')
     modPath = __import__(app_name).__path__[0]
     projectRoot = modPath.rstrip(app_name)
- 
     response=[]
     
     if(request.POST.get('cmd') == 'getMeta'):
@@ -67,6 +66,16 @@ def model_editor(request):
         dataPost = request.POST.get('data').decode('string_escape')
         setDataFile(request.POST.get('path'), dataPost, projectRoot)
         return HttpResponse("")
+    elif(request.POST.get('cmd') == 'find'):        
+        keywords = request.POST.get('keywords');
+        if(keywords and len(keywords)>0):
+            import whooshlib
+            index_path_file = os.path.join(IDE_PATH,'metafiles/.%s_index' % urllib.unquote_plus(app_name))
+            whooshlib.index_my_docs(projectRoot, index_path_file)
+            arrResults = []
+            for hit in whooshlib.find(index_path_file, keywords):
+                arrResults.append([hit.highlights("content"), hit["path"]])
+            return HttpResponse(json.dumps(arrResults) if len(arrResults)>0 else json.dumps([['No results found','']]))      
     else:
         return HttpResponse("")
 
@@ -97,13 +106,14 @@ def setDataFile(id, fileContent, rootPath):
         fullPathName = os.path.join(rootPath, urllib.unquote_plus(id))
         handle = open(fullPathName, 'w')
         handle.write(fileContent)
-    except IOError:
-        return HttpResponse('File exception (%s)'%urllib.unquote_plus(fileName))
-    finally:
         handle.close()
+    except IOError:
+        return HttpResponse('File exception (%s)'%urllib.unquote_plus(id))
+
     
 def getDataFile(id, rootPath):
     try: 
         return open(os.path.join(rootPath, urllib.unquote_plus(id))).read()
     except IOError:
         return HttpResponse('File exception (%s)'%id)
+    
