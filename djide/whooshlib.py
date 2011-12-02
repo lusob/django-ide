@@ -1,5 +1,5 @@
 ''' 
-Library to fulltext search inside python files
+Library to fulltext search inside source files
 
 Example of use
 import whooshlib
@@ -22,9 +22,10 @@ def clean_index(dirname, index_dir, index_name):
     # Assume we have a function that gathers the filenames of the
     # documents to be indexed
     for root, dirnames, filenames in os.walk(dirname):
-        for filename in fnmatch.filter(filenames, '*.py'):
-            py_file = (os.path.join(root, filename))
-            add_doc(writer, py_file)
+        for filename in filenames:
+            if filename.endswith(('.py','.html','.php')):
+                py_file = (os.path.join(root, filename))
+                add_doc(writer, py_file)
     writer.commit()
 
 def get_schema():
@@ -83,12 +84,13 @@ def incremental_index(dirname, index_dir, index_name):
     # Assume we have a function that gathers the filenames of the
     # documents to be indexed
     for root, dirnames, filenames in os.walk(dirname):
-        for filename in fnmatch.filter(filenames, '*.py'):
-            py_file = (os.path.join(root, filename))
-            if py_file in to_index or py_file not in indexed_paths:
-                # This is either a file that's changed, or a new file
-                # that wasn't indexed before. So index it!
-                add_doc(writer, py_file)
+        for filename in filenames:
+            if filename.endswith(('.py','.html','.php')):
+                py_file = (os.path.join(root, filename))
+                if py_file in to_index or py_file not in indexed_paths:
+                    # This is either a file that's changed, or a new file
+                    # that wasn't indexed before. So index it!
+                    add_doc(writer, py_file)
     writer.commit()
 
 def find(index_path_file, q):

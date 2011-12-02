@@ -71,7 +71,7 @@ def model_editor(request):
         if(keywords and len(keywords)>0):
             import whooshlib
             index_path_file = os.path.join(IDE_PATH,'metafiles/.%s_index' % urllib.unquote_plus(app_name))
-            whooshlib.index_my_docs(projectRoot, index_path_file)
+            whooshlib.index_my_docs('%s%s'%(projectRoot, app_name), index_path_file)
             arrResults = []
             for hit in whooshlib.find(index_path_file, keywords):
                 arrResults.append([hit.highlights("content"), hit["path"]])

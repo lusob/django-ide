@@ -648,6 +648,8 @@ Ext.onReady(function(){
             // Add tab with editor with local storage content
             if(document.getElementById(id)==null)
                 addTab(filePath,id);
+            else
+                tabs.setActiveTab(id);
         }
         function serverDataLoaded(serverData) {
             serverData.each(function(r){
