@@ -105,7 +105,7 @@ def setDataFile(id, fileContent, rootPath):
     try:
         fullPathName = os.path.join(rootPath, urllib.unquote_plus(id))
         handle = open(fullPathName, 'w')
-        handle.write(fileContent)
+        handle.write(fileContent.encode('UTF-8'))
         handle.close()
     except IOError:
         return HttpResponse('File exception (%s)'%urllib.unquote_plus(id))

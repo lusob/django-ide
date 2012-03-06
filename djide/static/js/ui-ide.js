@@ -6,6 +6,7 @@ Ext.onReady(function(){
                 return("There are unsaved changes, press cancel if you want save your changes before exit");
         }
     };
+    
     setActiveStyleSheet('gray');
     
     var tabPanelWest;
@@ -203,7 +204,9 @@ Ext.onReady(function(){
         Ext.reg('FilterTree', Ext.ux.FilterTree);
 
         tree = new Ext.ux.FilterTree();
-        tree.getRootNode().expand(); 
+        tree.expandAll(); 
+        tree.collapseAll();
+        //tree.getRootNode().expand();
         tabPanelWest.add(tree);
         tabPanelWest.setActiveTab(0);
     }
@@ -647,10 +650,10 @@ Ext.onReady(function(){
             // Add tab with editor with local storage content
             if(document.getElementById(id)==null)
                 addTab(filePath,id);
-            else
-                tabs.setActiveTab(id);
+            else {
+                tabs.setActiveTab(tabs.getItem(id).id);
+                }
         }
-        
         function serverDataLoaded(serverData) {
             serverData.each(function(r){
                 localStorage.setItem(r.get("id"), r.get("content"));
@@ -658,6 +661,9 @@ Ext.onReady(function(){
                 // Add tab with editor with local storage content
                 if(document.getElementById(id)==null)
                     addTab(filePath,id);
+                else {
+                    tabs.setActiveTab(tabs.getItem(id));
+                }
             });
         }
     }
