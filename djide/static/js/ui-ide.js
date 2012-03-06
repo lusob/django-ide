@@ -6,7 +6,6 @@ Ext.onReady(function(){
                 return("There are unsaved changes, press cancel if you want save your changes before exit");
         }
     };
-    
     setActiveStyleSheet('gray');
     
     var tabPanelWest;
@@ -651,6 +650,7 @@ Ext.onReady(function(){
             else
                 tabs.setActiveTab(id);
         }
+        
         function serverDataLoaded(serverData) {
             serverData.each(function(r){
                 localStorage.setItem(r.get("id"), r.get("content"));

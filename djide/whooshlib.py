@@ -23,7 +23,7 @@ def clean_index(dirname, index_dir, index_name):
     # documents to be indexed
     for root, dirnames, filenames in os.walk(dirname):
         for filename in filenames:
-            if filename.endswith(('.py','.html','.php')):
+            if filename.endswith(('.py','.html','.php','.js')):
                 py_file = (os.path.join(root, filename))
                 add_doc(writer, py_file)
     writer.commit()
