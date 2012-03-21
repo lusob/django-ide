@@ -3,10 +3,13 @@ from setuptools import setup
 #from distutils.core import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+requires = ['whoosh']
+
 setup(
         name = 'django-ide',
         packages = ['djide',],
-        version = '0.0.4',
+        version = '0.0.6',
         description = 'Web based IDE to develop Django apps',
         author = 'Luis Sobrecueva',
         author_email = 'luis@sobrecueva.com',
@@ -16,6 +19,7 @@ setup(
         'http://github.com/lusob/django-ide/downloads',
         keywords = ['IDE', 'Integrated Development Environment', 'Django IDE'],
         include_package_data=True,
+        install_requires = requires,
         zip_safe=False,
         classifiers = [
         'Programming Language :: Python',
@@ -30,4 +34,4 @@ setup(
         'Topic :: Text Editors :: Integrated Development Environments (IDE)',
         ],
         long_description = read('README.rst')
-    )
+)
