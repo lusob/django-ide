@@ -693,6 +693,7 @@ Ext.onReady(function(){
                                 }
                             });
                         }
+                        //TODO: iterar por metaServer['open_files'] y syncEditor con cada fichero
                     }, 
                     failure: function(){              
                         Ext.Msg.alert('Sync', 'Offline mode: It is not possible to connect to server, there may be connection problems, please try again later');
@@ -711,25 +712,28 @@ Ext.onReady(function(){
                         metaServer = metaServerObj.responseText;
                         var lsMeta = localStorage[appname+'_meta'];
                         if(lsMeta==metaServer) {
-                            var metaArrayToSent = (lsMeta.length==0)?{}:Ext.util.JSON.decode(lsMeta);
-                            var dataArrayToSent = {};
+                            var aMetaToSend = (lsMeta.length==0)?{"versions":{}, "open_files":{}}:Ext.util.JSON.decode(lsMeta);
+                            var aVersions = aMetaToSend['versions']
+                            var aDataToSend = {};
+                            
                             // Update meta and data arrays
                             for (var i=0; i<arrIdsModifiedFiles.length; i++) {
-                                if(arrIdsModifiedFiles[i] in metaArrayToSent){
-                                    metaArrayToSent[arrIdsModifiedFiles[i]]++;
+                                if(arrIdsModifiedFiles[i] in aMetaToSend['versions']){
+                                    aMetaToSend['versions'][arrIdsModifiedFiles[i]]++;
                                 } else {
-                                    metaArrayToSent[arrIdsModifiedFiles[i]]=0;
+                                    aMetaToSend['versions'][arrIdsModifiedFiles[i]]=0;
                                 }
-                                dataArrayToSent[arrIdsModifiedFiles[i]] = localStorage.getItem(arrIdsModifiedFiles[i]);
+                                aDataToSend[arrIdsModifiedFiles[i]] = localStorage.getItem(arrIdsModifiedFiles[i]);
                             }
-                            if(!isEmpty(dataArrayToSent)) {
-                                var metaArrayToSentSerialized = Ext.util.JSON.encode(metaArrayToSent);
-                                var dataArrayToSentSerialized = Ext.util.JSON.encode(dataArrayToSent);
+                            //TODO: iterar por los editores y actualizar aMetaToSend['open_files']
+                            if(!isEmpty(aDataToSend)) {
+                                var aMetaToSendSerialized = Ext.util.JSON.encode(aMetaToSend);
+                                var aDataToSendSerialized = Ext.util.JSON.encode(aDataToSend);
                                 Ext.Ajax.request({
                                     url: 'model-editor',
-                                    params: {cmd: "setMetaAndData", app_name: appname, meta: metaArrayToSentSerialized, data: dataArrayToSentSerialized},
+                                    params: {cmd: "setMetaAndData", app_name: appname, meta: aMetaToSendSerialized, data: aDataToSendSerialized},
                                     success: function(){
-                                        localStorage[appname+'_meta'] = metaArrayToSentSerialized;
+                                        localStorage[appname+'_meta'] = aMetaToSendSerialized;
                                         localStorage.removeItem('IdsModifiedFiles');
                                     },
                                     failure: function(){
