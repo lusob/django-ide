@@ -43,7 +43,7 @@ def model_editor(request):
             if(request.POST.get('meta')!=None):
                 metaDataServer = open(os.path.join(IDE_PATH,'metafiles/.%s' % urllib.unquote_plus(request.POST.get('app_name'))),'a+').read() 
                 metaArrayServer = json.loads(metaDataServer)
-                metaArrayClient = json.loads(request.POST.get('meta').decode('string_escape'))
+                metaArrayClient = json.loads(request.POST.get('meta').decode('string_escape')).get('versions')
                 for (id,value) in metaArrayServer.iteritems():
                     if(id not in metaArrayClient or value > metaArrayClient[id]): 
                         fileContent = getDataFile(id, projectRoot)
@@ -71,7 +71,7 @@ def model_editor(request):
         if(keywords and len(keywords)>0):
             import whooshlib
             index_path_file = os.path.join(IDE_PATH,'metafiles/.%s_index' % urllib.unquote_plus(app_name))
-            whooshlib.index_my_docs(modPath, index_path_file)
+            whooshlib.index_my_docs('%s%s'%(projectRoot, app_name), index_path_file)
             arrResults = []
             for hit in whooshlib.find(index_path_file, keywords):
                 arrResults.append([hit.highlights("content"), hit["path"]])
@@ -105,7 +105,7 @@ def setDataFile(id, fileContent, rootPath):
     try:
         fullPathName = os.path.join(rootPath, urllib.unquote_plus(id))
         handle = open(fullPathName, 'w')
-        handle.write(fileContent)
+        handle.write(fileContent.encode('UTF-8'))
         handle.close()
     except IOError:
         return HttpResponse('File exception (%s)'%urllib.unquote_plus(id))
@@ -116,4 +116,3 @@ def getDataFile(id, rootPath):
         return open(os.path.join(rootPath, urllib.unquote_plus(id))).read()
     except IOError:
         return HttpResponse('File exception (%s)'%id)
-    
