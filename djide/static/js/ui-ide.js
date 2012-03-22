@@ -34,7 +34,7 @@ Ext.onReady(function(){
     function launchShortcut(keyCode)
     {
         switch (keyCode)
-        {
+        { 
             case 70 : // 'F'
                     onButtonFindClick();
                 break;
@@ -313,7 +313,7 @@ Ext.onReady(function(){
         syncProject('load');
     }
     
-    var aEditors = Array();
+    var aEditors = {};
     var tabs = new Ext.TabPanel({
         resizeTabs:true, // turn on tab resizing
         minTabWidth: 115,
@@ -383,8 +383,7 @@ Ext.onReady(function(){
                 editorParserFiles = ["parsepython.js"];
                 parserCfg = {'pythonVersion': 2, 'strictErrors': true};
                 break;
-                    }
-        
+                    }        
         aEditors[id] = CodeMirror.fromTextArea('textarea_'+id, {
             stylesheet: editorStyleFiles,
             parserfile: editorParserFiles,
@@ -694,6 +693,12 @@ Ext.onReady(function(){
                             });
                         }
                         //TODO: iterar por metaServer['open_files'] y syncEditor con cada fichero
+                        aMeta = Ext.util.JSON.decode(lsMeta);
+                        for(var id in aMeta['open_files']){
+                            syncEditor(decodeURIComponent(id));
+                            //aEditors[id].jumpToLine(aMeta['open_files'][id]);
+                        }
+                        
                     }, 
                     failure: function(){              
                         Ext.Msg.alert('Sync', 'Offline mode: It is not possible to connect to server, there may be connection problems, please try again later');
@@ -713,7 +718,6 @@ Ext.onReady(function(){
                         var lsMeta = localStorage[appname+'_meta'];
                         if(lsMeta==metaServer) {
                             var aMetaToSend = (lsMeta.length==0)?{"versions":{}, "open_files":{}}:Ext.util.JSON.decode(lsMeta);
-                            var aVersions = aMetaToSend['versions']
                             var aDataToSend = {};
                             
                             // Update meta and data arrays
@@ -725,7 +729,10 @@ Ext.onReady(function(){
                                 }
                                 aDataToSend[arrIdsModifiedFiles[i]] = localStorage.getItem(arrIdsModifiedFiles[i]);
                             }
-                            //TODO: iterar por los editores y actualizar aMetaToSend['open_files']
+                            for (var id in aEditors) {
+                                aMetaToSend['open_files'][id]=aEditors[id].lineNumber(aEditors[id].cursorLine());                             
+                            }
+                            
                             if(!isEmpty(aDataToSend)) {
                                 var aMetaToSendSerialized = Ext.util.JSON.encode(aMetaToSend);
                                 var aDataToSendSerialized = Ext.util.JSON.encode(aDataToSend);
@@ -818,3 +825,4 @@ Ext.onReady(function(){
         return param ? params[param] : params;
     }
 });
+
