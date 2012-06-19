@@ -204,7 +204,7 @@ Ext.onReady(function(){
         Ext.reg('FilterTree', Ext.ux.FilterTree);
 
         tree = new Ext.ux.FilterTree();
-        tree.expandAll(); 
+        //tree.expandAll(); 
         tree.collapseAll();
         //tree.getRootNode().expand();
         tabPanelWest.add(tree);
@@ -359,7 +359,11 @@ Ext.onReady(function(){
                             animEl: 'elId',
                             icon: Ext.MessageBox.QUESTION
                         });
-                        return false; 
+                        return false;
+                    } else {
+                        delete aEditors[id];
+                        tabs.remove(tab);
+                        return false;
                     }
                 }
             }
@@ -692,12 +696,12 @@ Ext.onReady(function(){
                                 }
                             });
                         }
-                        //TODO: iterar por metaServer['open_files'] y syncEditor con cada fichero
                         aMeta = Ext.util.JSON.decode(lsMeta);
                         for(var id in aMeta['open_files']){
                             syncEditor(decodeURIComponent(id));
-                            //aEditors[id].jumpToLine(aMeta['open_files'][id]);
+                            //aEditors[id].jumpToLine(aEditors[id].nthLine(aMeta['open_files'][id]));
                         }
+                        tabs.setActiveTab(tabs.getItem(aMeta['active_file']));
                         
                     }, 
                     failure: function(){              
@@ -717,7 +721,7 @@ Ext.onReady(function(){
                         metaServer = metaServerObj.responseText;
                         var lsMeta = localStorage[appname+'_meta'];
                         if(lsMeta==metaServer) {
-                            var aMetaToSend = (lsMeta.length==0)?{"versions":{}, "open_files":{}}:Ext.util.JSON.decode(lsMeta);
+                            var aMetaToSend = (lsMeta.length==0)?{"versions":{}, "open_files":{}, "active_file":""}:Ext.util.JSON.decode(lsMeta);
                             var aDataToSend = {};
                             
                             // Update meta and data arrays
@@ -729,11 +733,12 @@ Ext.onReady(function(){
                                 }
                                 aDataToSend[arrIdsModifiedFiles[i]] = localStorage.getItem(arrIdsModifiedFiles[i]);
                             }
+                            aMetaToSend['open_files'] = {};
                             for (var id in aEditors) {
-                                aMetaToSend['open_files'][id]=aEditors[id].lineNumber(aEditors[id].cursorLine());                             
+                                aMetaToSend['open_files'][id]=aEditors[id].lineNumber(aEditors[id].cursorLine());
                             }
-                            
-                            if(!isEmpty(aDataToSend)) {
+                            aMetaToSend['active_file'] = tabs.getActiveTab().id;
+                            if(!isEmpty(aDataToSend) || aMetaToSend != Ext.util.JSON.decode(lsMeta)) {
                                 var aMetaToSendSerialized = Ext.util.JSON.encode(aMetaToSend);
                                 var aDataToSendSerialized = Ext.util.JSON.encode(aDataToSend);
                                 Ext.Ajax.request({
@@ -825,4 +830,5 @@ Ext.onReady(function(){
         return param ? params[param] : params;
     }
 });
+
 

@@ -42,7 +42,7 @@ def model_editor(request):
         try:
             if(request.POST.get('meta')!=None):
                 metaDataServer = open(os.path.join(IDE_PATH,'metafiles/.%s' % urllib.unquote_plus(request.POST.get('app_name'))),'a+').read() 
-                metaArrayServer = json.loads(metaDataServer)
+                metaArrayServer = json.loads(metaDataServer).get('versions')
                 metaArrayClient = json.loads(request.POST.get('meta').decode('string_escape')).get('versions')
                 for (id,value) in metaArrayServer.iteritems():
                     if(id not in metaArrayClient or value > metaArrayClient[id]): 
