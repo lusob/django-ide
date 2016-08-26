@@ -22,31 +22,35 @@ Currently, the following features have been written and are working:
 Installation
 ============
 - From pypi:
-    $pip install django-ide
+```shell
+$ pip install django-ide
+```
 
 - From source:
-    $python setup.py install
-
+```shell
+$ python setup.py install
+```
 Configuration
 =============
 
 The django-ide has two settings that can be set in `settings.py`:
 
-#. Add `djide` to your INSTALLED_APPS in your ``settings.py`` project:
-
+1. Add `djide` to your INSTALLED_APPS in your ``settings.py`` project:
     INSTALLED_APPS = (
         'djide',
-#. Include djide urls in your ``urls.py`` project:
 
+2. Include djide urls in your ``urls.py`` project:
     urlpatterns = patterns(
         (r'^djide/', include('djide.urls')),
 
 RUN   
-===
-$python manage.py runserver
+---
+```shell
+$ python manage.py runserver
+```
 That's it, the last command should start a local server on port 8000, now you can 
 open your browser and go to 127.0.0.1:8000/djide to edit your projects apps.
 
 TODOs and BUGS
-==============
+---
 See: https://github.com/lusob/django-ide/issues
