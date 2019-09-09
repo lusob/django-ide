@@ -1,4 +1,4 @@
-import os,sys, json, urllib, urllib2
+import os,sys, json, urllib.parse
 from os.path import join
 
 from django.template import RequestContext
@@ -6,6 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+
+METAFILES_PATH = os.path.join(os.path.dirname(sys.argv[0]), "metafiles")
+if not os.path.exists(METAFILES_PATH):
+    os.makedirs(METAFILES_PATH)
 
 @csrf_exempt
 def tree_data(request):
@@ -26,51 +30,50 @@ def tree_data(request):
 
 @csrf_exempt
 def model_editor(request):
-    IDE_PATH = os.path.dirname(os.path.abspath(__file__))
     app_name = request.POST.get('app_name')
     modPath = __import__(app_name).__path__[0]
     projectRoot = modPath.rstrip(app_name)
     response=[]
     
     if(request.POST.get('cmd') == 'getMeta'):
-        return HttpResponse(open(os.path.join(IDE_PATH,'metafiles/.%s' % urllib.unquote_plus(request.POST.get('app_name'))),'a+').read(), content_type='application/json')
+        return HttpResponse(open(os.path.join(METAFILES_PATH,'.%s' % urllib.parse.unquote_plus(request.POST.get('app_name'))),'a+').read(), content_type='application/json')
     elif(request.POST.get('cmd') == 'setMeta'):
-        setMetaFile(request.POST.get('app_name'),request.POST.get('meta').decode('string_escape')) 
+        setMetaFile(request.POST.get('app_name'),request.POST.get('meta'))
         return HttpResponse("")
     elif(request.POST.get('cmd') == 'getData'):
         arrData = {} 
         try:
             if(request.POST.get('meta')!=None):
-                metaDataServer = open(os.path.join(IDE_PATH,'metafiles/.%s' % urllib.unquote_plus(request.POST.get('app_name'))),'a+').read() 
+                metaDataServer = open(os.path.join(METAFILES_PATH,'.%s' % urllib.parse.unquote_plus(request.POST.get('app_name'))),'a+').read()
                 metaArrayServer = json.loads(metaDataServer).get('versions')
-                metaArrayClient = json.loads(request.POST.get('meta').decode('string_escape')).get('versions')
-                for (id,value) in metaArrayServer.iteritems():
+                metaArrayClient = json.loads(request.POST.get('meta')).get('versions')
+                for (id,value) in metaArrayServer.items():
                     if(id not in metaArrayClient or value > metaArrayClient[id]): 
                         fileContent = getDataFile(id, projectRoot)
                         arrData[id] = fileContent
             else:
                 fileContent = getDataFile(request.POST.get('path'), projectRoot)
-                arrData['id'] = urllib.quote_plus(request.POST.get('path'))
+                arrData['id'] = urllib.parse.quote_plus(request.POST.get('path'))
                 arrData['content'] = fileContent
         except ValueError:
             pass
         return HttpResponse(json.dumps(arrData), content_type='application/json')
     elif(request.POST.get('cmd') == 'setMetaAndData'):
-        setMetaFile(request.POST.get('app_name'),request.POST.get('meta').decode('string_escape')) 
+        setMetaFile(request.POST.get('app_name'),request.POST.get('meta'))
         dataPost = request.POST.get('data')
         dataArray = json.loads(dataPost, strict=False)
-        for (fileName,fileContent) in dataArray.iteritems():
+        for (fileName,fileContent) in dataArray.items():
             setDataFile(fileName, fileContent, projectRoot)
         return HttpResponse("")
     elif(request.POST.get('cmd') == 'setData'):
-        dataPost = request.POST.get('data').decode('string_escape')
+        dataPost = request.POST.get('data')
         setDataFile(request.POST.get('path'), dataPost, projectRoot)
         return HttpResponse("")
     elif(request.POST.get('cmd') == 'find'):        
         keywords = request.POST.get('keywords');
         if(keywords and len(keywords)>0):
             import whooshlib
-            index_path_file = os.path.join(IDE_PATH,'metafiles/.%s_index' % urllib.unquote_plus(app_name))
+            index_path_file = os.path.join(METAFILES_PATH,'.%s_index' % urllib.parse.unquote_plus(app_name))
             whooshlib.index_my_docs('%s%s'%(projectRoot, app_name), index_path_file)
             arrResults = []
             for hit in whooshlib.find(index_path_file, keywords):
@@ -91,28 +94,27 @@ def edit(request):
         return render_to_response('index.html', {'apps':list(set(a))})
 
 def setMetaFile(app_name, metaData):
-    IDE_PATH = os.path.dirname(os.path.abspath(__file__))
-    metaDataFile = os.path.join(IDE_PATH,'metafiles/.%s' % urllib.unquote_plus(app_name))
+    metaDataFile = os.path.join(METAFILES_PATH,'.%s' % urllib.parse.unquote_plus(app_name))
     try: 
         handle = open(metaDataFile, 'w')
         handle.write(metaData)
-    except IOError as (errno, strerror):
-        return HttpResponse('File exception (%s): %s, %s'%(metaDataFile,errno,strerror))
+    except IOError as e:
+        return HttpResponse('File exception (%s): %s, %s'%(metaDataFile,e.errno,e.strerror))
     finally:
         handle.close()
 
 def setDataFile(id, fileContent, rootPath):
     try:
-        fullPathName = os.path.join(rootPath, urllib.unquote_plus(id))
+        fullPathName = os.path.join(rootPath, urllib.parse.unquote_plus(id))
         handle = open(fullPathName, 'w')
-        handle.write(fileContent.encode('UTF-8'))
+        handle.write(fileContent)
         handle.close()
     except IOError:
-        return HttpResponse('File exception (%s)'%urllib.unquote_plus(id))
+        return HttpResponse('File exception (%s)'%urllib.parse.unquote_plus(id))
 
     
 def getDataFile(id, rootPath):
     try: 
-        return open(os.path.join(rootPath, urllib.unquote_plus(id))).read()
+        return open(os.path.join(rootPath, urllib.parse.unquote_plus(id))).read()
     except IOError:
         return HttpResponse('File exception (%s)'%id)
