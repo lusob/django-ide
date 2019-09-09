@@ -1,4 +1,4 @@
-include README.rst
+include README.md
 recursive-include djide/templates *.html
 graft djide/static
 graft djide/metafiles

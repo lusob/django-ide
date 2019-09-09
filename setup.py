@@ -33,5 +33,5 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Text Editors :: Integrated Development Environments (IDE)',
         ],
-        long_description = read('README.rst')
+        long_description = read('README.md')
 )
